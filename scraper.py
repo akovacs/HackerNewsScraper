@@ -64,15 +64,37 @@ class Webscraper:
         with open(outputFileName, 'w') as outputfile:
             page = markup.page()
             page.init(title="AKovacs Work Sample",
-                header="Articles from news.ycombinator.com frontpage")
-            page.table(class_="table")
-            #page.thead()
+                css="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css")
+            page.h3("""Articles scraped from <a href="http://news.ycombinator.com">Hacker News</a> frontpage""")
+            page.table(class_="table table-hover")
+
+            # Build table header
+            page.thead.open()
+            page.tr.open()
+            for column in Article._fields:
+                if column != 'link':
+                    page.th(column)
+            page.tr.close()
+            page.thead.close()
+
+            # Build table rows
             for article in self.articles:
-                page.tr.open()
-                map(lambda column: page.td(column), article)
-                page.tr.close()
+                self.outputArticle(page, article)
             page.table.close()
+            page.p("Created by akovacs")
             outputfile.write(page.__str__().encode('utf8'))
+
+    def outputArticle(self, page, article):
+        page.tr.open()
+        page.td(article.rank)
+        page.td.open()
+        # Truncate title text to 50 lines
+        page.a(article.title[:80] + (article.title[80:] and '...'), href=article.link)
+        page.td.close()
+        page.td(article.points)
+        page.td(article.submitter)
+        page.tr.close()
+
 
 if __name__ == "__main__":
     hnscraper = Webscraper('http://news.ycombinator.com/')
