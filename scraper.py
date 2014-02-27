@@ -10,6 +10,8 @@
 
 import requests
 from bs4 import BeautifulSoup
+import markup
+
 import re
 from collections import namedtuple
 
@@ -55,9 +57,24 @@ class Webscraper:
         userAnchor = meta.find('a', href=USER_REGEX)
         articleSubmitter = userAnchor.text if userAnchor is not None else 'unknown'
 
-        currentArticle = Article(rank=articleRank, title=articleTitle, link=articleLink, points=articleScore, submitter=articleSubmitter)
-        print currentArticle
+        self.articles.append(Article(rank=articleRank, title=articleTitle, link=articleLink, points=articleScore, submitter=articleSubmitter))
+
+    # Output in requested html table format
+    def outputTable(self, outputFileName):
+        with open(outputFileName, 'w') as outputfile:
+            page = markup.page()
+            page.init(title="AKovacs Work Sample",
+                header="Articles from news.ycombinator.com frontpage")
+            page.table(class_="table")
+            #page.thead()
+            for article in self.articles:
+                page.tr.open()
+                map(lambda column: page.td(column), article)
+                page.tr.close()
+            page.table.close()
+            outputfile.write(page.__str__().encode('utf8'))
 
 if __name__ == "__main__":
     hnscraper = Webscraper('http://news.ycombinator.com/')
     hnscraper.parse()
+    hnscraper.outputTable('table.html')
