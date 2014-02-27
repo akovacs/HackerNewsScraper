@@ -1,0 +1,11 @@
+# Create python2 virtualenv
+virtualenv2 --no-site-packages python2-scraper
+
+# Activate your new virtualenv
+source python2-scraper/bin/activate
+
+# Install requirements
+pip install -r requirements.txt
+
+# Alternatively: install dependencies manually
+pip install requests beautifulsoup4
