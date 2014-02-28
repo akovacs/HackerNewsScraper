@@ -99,4 +99,4 @@ class Webscraper:
 if __name__ == "__main__":
     hnscraper = Webscraper('http://news.ycombinator.com/')
     hnscraper.parse()
-    hnscraper.outputTable('table.html')
+    hnscraper.outputTable('index.html')
